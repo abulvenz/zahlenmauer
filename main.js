@@ -1,7 +1,8 @@
 import m from "mithril";
 import tagl from "tagl-mithril";
+import t from "./tr";
 
-const { p, h1, table, tr, td, input, button } = tagl(m);
+const { p, h1, table, tr, td, input, button, select, option } = tagl(m);
 const { trunc, random, sqrt, min, max } = Math;
 
 const range = (N) => {
@@ -24,7 +25,7 @@ const solvable = (arr) => arr.length === 3 && countUndefined(arr) === 1;
 
 const wall = (values = [], depth = dreieckszahl(values.length), cnt = 0) =>
   range(depth).map((row) =>
-    range(row + 1).map((col) => ({
+    range(row + 1).map(() => ({
       init: values[cnt],
       value: values[cnt],
       idx: cnt++,
@@ -96,12 +97,11 @@ const randomWall = (depth) => {
   const arr = solvedWall.flatMap((e) => e).map((e) => e.value);
   let masked = [];
 
-  while (!solve(wall((masked = mask(depth, arr)))))
-    console.log("And I tried, yeah I tried!");
-
+  while (!solve(wall((masked = mask(depth, arr)))));
   return wall(masked);
 };
 
+let language = t.currentLanguage();
 let size = 3;
 let theWall = randomWall(size);
 
@@ -153,7 +153,7 @@ m.mount(document.body, {
     use(complete(theWall) && checkWall(theWall), (isSolved) => [
       h1(
         { onclick: (e) => (showSchnickSchnack = !showSchnickSchnack) },
-        "Zahlenmauer"
+        t("Zahlenmauer")
       ),
       table[isSolved ? "solved" : ""][checkWall(theWall) ? "correct" : "wrong"](
         theWall.map((row, ridx) =>
@@ -181,17 +181,26 @@ m.mount(document.body, {
       isSolved
         ? button(
             { onclick: () => increaseCount() && (theWall = randomWall(size)) },
-            "Neu"
+            t("Neu")
           )
         : null,
       showSchnickSchnack
         ? [
+            t("Größe") + ": ",
             button({ onclick: (e) => (size = max(3, size - 1)) }, "<"),
             " " + size + " ",
             button({ onclick: (e) => (size = min(10, size + 1)) }, ">"),
-            count ? "Richtige: " + count : null,
-            p(
-              "Die Aufgabe ist es in jedem Feld die Summe der beiden darunter liegenden Felder einzutragen. Wenn alles richtig ist wird die ganze Mauer grün! Sobald ein Feld falsch eingetragen ist, färbt sich der Rahmen rot. Wenn du dich besser auf die Aufgabe konzentrieren möchtest, kannst du auf die Überschrift drücken. Los geht's!"
+            count ? " " + t("Richtige") + ": " + count : null,
+            p(t("Instructions")),
+            select(
+              {
+                value: language,
+                oninput: (e) => {
+                  language = e.target.value;
+                  t.setLanguage(e.target.value);
+                },
+              },
+              t.getLanguages().map((c) => option(c))
             ),
           ]
         : null,
