@@ -1,0 +1,38 @@
+.number {
+    background-color: #aaa;
+    color: black;
+    width: 30px;
+}
+
+.empty {
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.input {
+    width: 30px
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.correct {
+    border: 3px solid green;
+}
+
+.wrong {
+    border: 3px solid red;
+}
+
+.solved {
+    background-color: green;
+}

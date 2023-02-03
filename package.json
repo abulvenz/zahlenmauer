@@ -1,0 +1,28 @@
+{
+  "name": "zahlenmauer",
+  "version": "1.0.0",
+  "description": "Ein Programm für Erstklässler",
+    "scripts": {
+	"start": "parcel index.html",
+      "gh-page": "parcel build --public-url https://abulvenz.github.io/zahlenmauer --dist-dir docs index.html",
+      "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abulvenz/zahlenmauer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abulvenz/zahlenmauer/issues"
+  },
+  "homepage": "https://github.com/abulvenz/zahlenmauer#readme",
+  "dependencies": {
+    "mithril": "^2.2.2",
+    "tagl-mithril": "^1.2.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.8.3"
+  }
+}
