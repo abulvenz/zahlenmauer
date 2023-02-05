@@ -1,9 +1,10 @@
 .number {
     background-color: #aaa;
     color: black;
-    width: 2em;
+    width: 2.2em;
     height: 1.5em;
     text-align: center;
+    padding: 0px;
 }
 
 .empty {
@@ -27,6 +28,7 @@ table {
     font-size: 1em;
     height: 1.5em;
     padding: 0px;
+    margin: 0px;
 }
 
 /* Chrome, Safari, Edge, Opera */

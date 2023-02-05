@@ -2,7 +2,8 @@ import m from "mithril";
 import tagl from "tagl-mithril";
 import t from "./tr";
 
-const { p, h1, table, tr, td, input, button, select, option } = tagl(m);
+const { div, p, h1, table, tr, td, input, button, select, option, hr } =
+  tagl(m);
 const { trunc, random, sqrt, min, max } = Math;
 
 const range = (N) => {
@@ -179,10 +180,15 @@ m.mount(document.body, {
         )
       ),
       isSolved
-        ? button(
-            { onclick: () => increaseCount() && (theWall = randomWall(size)) },
-            t("Neu")
-          )
+        ? [
+            button(
+              {
+                onclick: () => increaseCount() && (theWall = randomWall(size)),
+              },
+              t("Neu")
+            ),
+            " ",
+          ]
         : null,
       showSchnickSchnack
         ? [
@@ -202,6 +208,8 @@ m.mount(document.body, {
               },
               t.getLanguages().map((c) => option(c))
             ),
+            // hr(),
+            // div(t("Impressum")),
           ]
         : null,
     ]),
