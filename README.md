@@ -1,5 +1,5 @@
 # zahlenmauer
-Ein Programm für Erstklässler
+Ein Programm für Erstklässler. Live-Version gibt es [hier](https://abulvenz.github.io/zahlenmauer/).
 
 ## Regeln
 Die "Zahlenmauer" ist so aufgebaut, dass von einer Startebene mit `N` Elementen nach oben hin jede Zeile immer ein Element weniger hat, bis nur noch ein Element in der obersten Reihe der Mauer übrig ist. In jedem Stein der Mauer soll als Lösung die Summe der beiden Zahlen darunter stehen.
