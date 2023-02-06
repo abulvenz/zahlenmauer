@@ -2,7 +2,7 @@ import m from "mithril";
 import tagl from "tagl-mithril";
 import t from "./tr";
 
-const { div, p, h1, table, tr, td, input, button, select, option, hr } =
+const { div, p, h1, table, tr, td, input, button, select, option, hr, a } =
   tagl(m);
 const { trunc, random, sqrt, min, max } = Math;
 
@@ -208,8 +208,12 @@ m.mount(document.body, {
               },
               t.getLanguages().map((c) => option(c))
             ),
-            // hr(),
-            // div(t("Impressum")),
+            hr(),
+            div(
+              t("Impressum1"),
+              a({ href: "https://github.com/abulvenz/zahlenmauer" }, "github"),
+              t("Impressum2")
+            ),
           ]
         : null,
     ]),
