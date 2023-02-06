@@ -110,7 +110,7 @@ $$A = \sum_{i=1}^{N-1}{i} = \frac{N(N-1)}{2}$$
 
 Wenn man jetzt `N` beliebige Elemente für die Mauer vorgibt, müsste es doch eine Lösung geben. Leider ja, aber diese Lösung wäre im Bereich der rationalen Zahlen zu suchen. Also werden wir uns hier nicht mit den Problemen der [diophantischen Gleichungen](https://de.wikipedia.org/wiki/Diophantische_Gleichung) herumplagen, sondern den oben genannten Ansatz zur Erzeugung einer ganzzahligen Mauer nutzen und dann einfach Felder weglassen so dass die Mauer lösbar bleibt.
 
-Kann man beliebige Felder angeben, so dass das System lösbar ist? Tatsächlich ist die Anzahl der angegebenen Zahlen das einzig entscheidende bei der Lösbarkeit der Mauer. Leider gibt es noch ein Problem. Das zeige ich mal an diesem Beispiel (gleiche Zahlenmauer wie das Eingangsbeispiel):
+Kann man beliebige Felder angeben, so dass das System lösbar ist? Tatsächlich ist die Anzahl der angegebenen Zahlen das einzig entscheidende bei der Lösbarkeit der Mauer, da die Gleichungen mit denen Zahlen vorgegeben werden immer linear unabhängig voneinander und von den anderen Gleichungen sind, solange man unterschiedliche Felder wählt (Beweis: Hausaufgabe für den Leser:). Leider gibt es noch ein Problem. Das zeige ich mal an diesem Beispiel (gleiche Zahlenmauer wie das Eingangsbeispiel):
 ```
    8
   4 4
