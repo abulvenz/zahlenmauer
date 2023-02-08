@@ -42,9 +42,11 @@ const randomIndices = (N, MAX) => {
   return result;
 };
 
-const mask = (N, arr) =>
-  use(randomIndices(N, arr.length), (inn) =>
-    arr.map((e, i) => (inn.findIndex((ind) => ind === i) < 0 ? undefined : e))
+const randomlyMask = (N, arr) =>
+  use(randomIndices(N, arr.length), (rndIdxes) =>
+    arr.map((element, index) =>
+      rndIdxes.findIndex((rndIdx) => rndIdx === index) < 0 ? undefined : element
+    )
   );
 
 const traverse = (wall, tripleCB, results = []) => {
@@ -98,22 +100,9 @@ const randomWall = (depth) => {
   const arr = solvedWall.flatMap((e) => e).map((e) => e.value);
   let masked = [];
 
-  while (!solve(wall((masked = mask(depth, arr)))));
+  while (!solve(wall((masked = randomlyMask(depth, arr)))));
   return wall(masked);
 };
-
-let language = t.currentLanguage();
-let size = 3;
-let theWall = randomWall(size);
-
-const inputC = (vnode) => ({
-  view: (vnode) =>
-    input.input({
-      type: "number",
-      disabled: vnode.attrs.disabled,
-      onchange: (e) => vnode.attrs.onchange(+e.target.value),
-    }),
-});
 
 const check = (top, left, right) =>
   top === undefined ||
@@ -140,32 +129,49 @@ const complete = (wall) =>
     (values) => values.every((e) => e !== undefined)
   );
 
-let count = +localStorage.getItem("correctlySolved") || 0;
+/**
+ * Application state
+ */
+let correctlySolved = +localStorage.getItem("correctlySolved") || 0;
 let showSchnickSchnack = true;
+let language = t.currentLanguage();
+let wallHeight = 3;
+let currentWall = randomWall(wallHeight);
 
 const increaseCount = () => {
-  count = count + 1;
-  localStorage.setItem("correctlySolved", count);
+  correctlySolved = correctlySolved + 1;
+  localStorage.setItem("correctlySolved", correctlySolved);
   return true;
 };
 
+const inputComponent = (vnode) => ({
+  view: (vnode) =>
+    input.input({
+      type: "number",
+      disabled: vnode.attrs.disabled,
+      onchange: (e) => vnode.attrs.onchange(+e.target.value),
+    }),
+});
+
 m.mount(document.body, {
   view: (vnode) =>
-    use(complete(theWall) && checkWall(theWall), (isSolved) => [
+    use(complete(currentWall) && checkWall(currentWall), (isSolved) => [
       h1(
         { onclick: (e) => (showSchnickSchnack = !showSchnickSchnack) },
         t("Zahlenmauer")
       ),
-      table[isSolved ? "solved" : ""][checkWall(theWall) ? "correct" : "wrong"](
-        theWall.map((row, ridx) =>
+      table[isSolved ? "solved" : ""][
+        checkWall(currentWall) ? "correct" : "wrong"
+      ](
+        currentWall.map((row, ridx) =>
           tr(
-            { key: count + "" + ridx },
-            range(theWall.length - ridx).map((e) => td.empty()),
+            { key: correctlySolved + "" + ridx },
+            range(currentWall.length - ridx).map((e) => td.empty()),
             row.map((field, cidx) => [
               td.number(
                 field.init === undefined
-                  ? m(inputC, {
-                      key: count + "" + ridx + "" + cidx,
+                  ? m(inputComponent, {
+                      key: correctlySolved + "" + ridx + "" + cidx,
                       disabled: isSolved,
                       value: field.value,
                       onchange: (e) => (field.value = e),
@@ -183,7 +189,8 @@ m.mount(document.body, {
         ? [
             button(
               {
-                onclick: () => increaseCount() && (theWall = randomWall(size)),
+                onclick: () =>
+                  increaseCount() && (currentWall = randomWall(wallHeight)),
               },
               t("Neu")
             ),
@@ -193,10 +200,18 @@ m.mount(document.body, {
       showSchnickSchnack
         ? [
             t("Größe") + ": ",
-            button({ onclick: (e) => (size = max(3, size - 1)) }, "<"),
-            " " + size + " ",
-            button({ onclick: (e) => (size = min(10, size + 1)) }, ">"),
-            count ? " " + t("Richtige") + ": " + count : null,
+            button(
+              { onclick: (e) => (wallHeight = max(3, wallHeight - 1)) },
+              "<"
+            ),
+            " " + wallHeight + " ",
+            button(
+              { onclick: (e) => (wallHeight = min(10, wallHeight + 1)) },
+              ">"
+            ),
+            correctlySolved
+              ? " " + t("Richtige") + ": " + correctlySolved
+              : null,
             p(t("Instructions")),
             select(
               {

@@ -151,5 +151,5 @@ Es ergibt sich der folgende Algorithmus zum Finden der Aufgabe:
 
 ### Algorithmus: Finden der Aufgabe der Höhe `N`:
 1. Erzeuge eine Zahlenmauer $M_{korrekt}$ der Höhe `N` in dem die unterste Reihe mit Zufallszahlen gefüllt ist und der Rest leer ist.
-2. Würfle `N` Positionen $P_i, i = \{1..N\}$ aus und erzeuge eine Zahlenmauer $M_{kandidat}$ mit den Werten aus $M_{korrekt} and den Positionen $P_i$.
+2. Würfle `N` Positionen $P_i, i = \{1..N\}$ aus und erzeuge eine Zahlenmauer $M_{kandidat}$ mit den Werten aus $M_{korrekt}$ an den Positionen $P_i$.
 3. Solange der der Sub-Algorithmus Solve($M_{kandidat}$) nicht die Lösung bestätigt hat, gehe zu 2.
