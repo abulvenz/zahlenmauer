@@ -24,6 +24,10 @@ const sumsum = (N) =>
 const countUndefined = (arr) => arr.filter((e) => e === undefined).length;
 const solvable = (arr) => arr.length === 3 && countUndefined(arr) === 1;
 
+/**
+ * Creates a wall as doubly nested array starting at the top.
+ * Each field receives its initial value from the supplied values array.
+ */
 const wall = (values = [], depth = dreieckszahl(values.length), cnt = 0) =>
   range(depth).map((row) =>
     range(row + 1).map(() => ({
@@ -33,6 +37,9 @@ const wall = (values = [], depth = dreieckszahl(values.length), cnt = 0) =>
     }))
   );
 
+/**
+ * Returns an array with N unique values that are smaller than MAX.
+ */
 const randomIndices = (N, MAX) => {
   const result = [];
   while (result.length !== N) {
@@ -42,6 +49,10 @@ const randomIndices = (N, MAX) => {
   return result;
 };
 
+/**
+ * Returns a copy of the supplied array but all fields
+ * except N are set to undefined.
+ */
 const randomlyMask = (N, arr) =>
   use(randomIndices(N, arr.length), (rndIdxes) =>
     arr.map((element, index) =>
@@ -49,6 +60,11 @@ const randomlyMask = (N, arr) =>
     )
   );
 
+/**
+ * Maps a wall to all its equations and calls
+ * tripleCB on the fields belonging to the equation.
+ * Returns all equations mapped by tripleCB to an array.
+ */
 const traverse = (wall, tripleCB, results = []) => {
   wall.forEach((row, ridx) =>
     ridx < wall.length - 1
@@ -62,6 +78,10 @@ const traverse = (wall, tripleCB, results = []) => {
   return results;
 };
 
+/**
+ * Given the values a,b,c solves the equation for the last unknown.
+ * Returns true when solved.
+ */
 const solveEquation = (a, b, c) => {
   if (solvable([a.value, b.value, c.value])) {
     if (a.value === undefined) {
@@ -78,15 +98,22 @@ const solveEquation = (a, b, c) => {
   return false;
 };
 
+/**
+ * True when all fields in the wall are filled.
+ * Not necessarily correctly filled.
+ */
 const isComplete = (wall) =>
   use(
     wall.flatMap((e) => e).map((e) => e.value),
     (values) => values.every((e) => e !== undefined)
   );
 
+/**
+ * Iteratively solves all solvable equations in the given wall.
+ * Returns if the resulting wall is completely filled.
+ */
 const solveWall = (theWall) => {
   while (traverse(theWall, (a, b, c) => solveEquation(a, b, c)).some((e) => e));
-
   return isComplete(theWall);
 };
 
@@ -120,7 +147,9 @@ const checkEquation = (top, left, right) =>
   top === left + right;
 
 /**
- * Check all equations on the wall
+ * Check all equations on the wall.
+ * True when all solved equations are correct.
+ * False when at least one is incorrect.
  */
 const checkWall = (wall) =>
   traverse(wall, (top, left, right) =>
@@ -135,6 +164,7 @@ let showSchnickSchnack = true;
 let language = t.currentLanguage();
 let wallHeight = 3;
 let onlyAddition = false;
+const maxHeight = 10;
 let currentWall = createRandomWall(wallHeight, onlyAddition);
 
 const increaseCount = () => {
@@ -223,7 +253,7 @@ m.mount(document.body, {
             ),
             " " + wallHeight + " ",
             button(
-              { onclick: (e) => (wallHeight = min(10, wallHeight + 1)) },
+              { onclick: (e) => (wallHeight = min(maxHeight, wallHeight + 1)) },
               ">"
             ),
             br(),

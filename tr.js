@@ -10,6 +10,7 @@ const translations = {
       "Die Aufgabe ist es in jedem Feld die Summe der beiden darunter liegenden Felder einzutragen. Wenn alles richtig ist wird die ganze Mauer grün! Sobald ein Feld falsch eingetragen ist, färbt sich der Rahmen rot. Wenn du dich besser auf die Aufgabe konzentrieren möchtest, kannst du auf die Überschrift drücken. Los geht's!",
     Impressum1: "Quelltext und Beschreibung gibt es auf ",
     Impressum2: ".",
+    "Nur Addition": "Nur Addition",
   },
   en: {
     Größe: "Size",
@@ -20,6 +21,7 @@ const translations = {
       "The task is to enter in each field the sum of the two fields below it. If everything is correct, the whole wall turns green! As soon as a field is entered incorrectly, the frame turns red. If you want to concentrate better on the task, you can press on the heading. Let's go!",
     Impressum1: "Source code and description are available on ",
     Impressum2: ".",
+    "Nur Addition": "Only addition",
   },
   tr: {
     Größe: "Boyut",
