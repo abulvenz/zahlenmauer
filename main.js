@@ -2,8 +2,8 @@ import m from "mithril";
 import tagl from "tagl-mithril";
 import t from "./tr";
 
-const { div, p, h1, table, tr, td, input, button, select, option, hr, a } =
-  tagl(m);
+// prettier-ignore
+const { div, p, h1, table, tr, td, input, button, select, option, hr, br, a, label,} = tagl(m);
 const { trunc, random, sqrt, min, max } = Math;
 
 const range = (N) => {
@@ -90,13 +90,15 @@ const solveWall = (theWall) => {
   return isComplete(theWall);
 };
 
-const createRandomWall = (depth, baseMaxValue = 4) => {
+const createRandomWall = (depth, onlyAddition = false, baseMaxValue = 4) => {
   const solvableStart = [
     ...range(sumsum(depth - 1)).map((e) => undefined),
     ...range(depth).map((e) => randomInt(baseMaxValue)),
   ];
 
   const solvedWall = wall(solvableStart);
+  if (onlyAddition) return solvedWall;
+
   solveWall(solvedWall);
 
   const arr = solvedWall.flatMap((e) => e).map((e) => e.value);
@@ -132,7 +134,8 @@ let correctlySolved = +localStorage.getItem("correctlySolved") || 0;
 let showSchnickSchnack = true;
 let language = t.currentLanguage();
 let wallHeight = 3;
-let currentWall = createRandomWall(wallHeight);
+let onlyAddition = false;
+let currentWall = createRandomWall(wallHeight, onlyAddition);
 
 const increaseCount = () => {
   correctlySolved = correctlySolved + 1;
@@ -204,7 +207,7 @@ m.mount(document.body, {
               {
                 onclick: () =>
                   increaseCount() &&
-                  (currentWall = createRandomWall(wallHeight)),
+                  (currentWall = createRandomWall(wallHeight, onlyAddition)),
               },
               t("Neu")
             ),
@@ -223,9 +226,19 @@ m.mount(document.body, {
               { onclick: (e) => (wallHeight = min(10, wallHeight + 1)) },
               ">"
             ),
+            br(),
             correctlySolved
               ? " " + t("Richtige") + ": " + correctlySolved
               : null,
+            br(),
+            label(
+              input({
+                type: "checkbox",
+                checked: onlyAddition,
+                oninput: (e) => (onlyAddition = e.target.checked),
+              }),
+              tr("Nur Addition")
+            ),
             p(t("Instructions")),
             select(
               {
