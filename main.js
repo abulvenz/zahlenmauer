@@ -153,6 +153,14 @@ const inputComponent = (vnode) => ({
     }),
 });
 
+const halfNeeded = (N, ridx) => (N + ridx) % 2 === 0;
+
+console.log("HalfNeeded", halfNeeded(4, 2));
+
+const fullNeeded = (N, ridx) => trunc((N - ridx - 1) / 2);
+
+console.log("fullNeeded", fullNeeded(4, 0));
+
 m.mount(document.body, {
   view: (vnode) =>
     use(complete(currentWall) && checkWall(currentWall), (isSolved) => [
@@ -163,12 +171,19 @@ m.mount(document.body, {
       table[isSolved ? "solved" : ""][
         checkWall(currentWall) ? "correct" : "wrong"
       ](
-        currentWall.map((row, ridx) =>
+        { cellspacing: 0 },
+
+        currentWall.map((r, ridx) =>
           tr(
-            { key: correctlySolved + "" + ridx },
-            range(currentWall.length - ridx).map((e) => td.empty()),
-            row.map((field, cidx) => [
-              td.number(
+            halfNeeded(currentWall.length, ridx)
+              ? td.half.wall({ colspan: 1 })
+              : null,
+            range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
+              td.full.wall({ colspan: 2 })
+            ),
+            r.map((field, cidx) =>
+              td.full.wall(
+                { colspan: 2 },
                 field.init === undefined
                   ? m(inputComponent, {
                       key: correctlySolved + "" + ridx + "" + cidx,
@@ -179,9 +194,15 @@ m.mount(document.body, {
                   : field.value !== undefined
                   ? field.value
                   : "-"
-              ),
-              td.empty(),
-            ])
+              )
+            ),
+            range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
+              td.full.wall({ colspan: 2 })
+            ),
+
+            halfNeeded(currentWall.length, ridx)
+              ? td.half.wall({ colspan: 1 })
+              : null
           )
         )
       ),
