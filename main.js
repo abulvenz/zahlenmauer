@@ -195,7 +195,8 @@ m.mount(document.body, {
               ? td.half.wall.empty({ colspan: 1 })
               : null
           )
-        )
+        ),
+        tr(range(currentWall.length * 2).map((e) => td({ colspan: 1 })))
       ),
       isSolved
         ? [
