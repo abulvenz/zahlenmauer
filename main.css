@@ -1,11 +1,7 @@
-td.wall {
-    background-color: rgb(228, 43, 43);
+.wall {
     border: 1px solid lightgray;
-    w-idth: 120px;
-    mi-n-width: 30px;
     padding: 0;
     text-align: center;
-
     margin: 0;
     height: 1.5em;
 }
@@ -19,7 +15,7 @@ td.wall {
 }
 
 .number {
-    background-color: #aaa;
+    background-color: rgb(228, 43, 43);
     color: black;
     /*width: 2.2em;*/
     height: 1.5em;
@@ -29,10 +25,10 @@ td.wall {
 }
 
 .empty {
+    background-color: rgb(241, 118, 118);
     color: #fff;
     padding: 0px;
     margin: 0px;
-    back-ground-color: rgba(0, 0, 0, 0);
 }
 
 h1 {

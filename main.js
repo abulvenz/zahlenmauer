@@ -78,56 +78,52 @@ const solveEquation = (a, b, c) => {
   return false;
 };
 
-const solve = (theWall) => {
+const isComplete = (wall) =>
+  use(
+    wall.flatMap((e) => e).map((e) => e.value),
+    (values) => values.every((e) => e !== undefined)
+  );
+
+const solveWall = (theWall) => {
   while (traverse(theWall, (a, b, c) => solveEquation(a, b, c)).some((e) => e));
 
-  return traverse(
-    theWall,
-    (a, b, c) =>
-      a.value !== undefined && b.value !== undefined && c.value !== undefined
-  ).every((e) => e === true);
+  return isComplete(theWall);
 };
 
-const randomWall = (depth) => {
+const createRandomWall = (depth, baseMaxValue = 4) => {
   const solvableStart = [
     ...range(sumsum(depth - 1)).map((e) => undefined),
-    ...range(depth).map((e) => randomInt(4)),
+    ...range(depth).map((e) => randomInt(baseMaxValue)),
   ];
 
   const solvedWall = wall(solvableStart);
-  solve(solvedWall);
+  solveWall(solvedWall);
 
   const arr = solvedWall.flatMap((e) => e).map((e) => e.value);
   let masked = [];
 
-  while (!solve(wall((masked = randomlyMask(depth, arr)))));
+  while (!solveWall(wall((masked = randomlyMask(depth, arr)))));
   return wall(masked);
 };
 
-const check = (top, left, right) =>
+/**
+ * When an equation has all its variables defined
+ * check if the sum of left and right equals top.
+ * An incomplete equation is always correct.
+ */
+const checkEquation = (top, left, right) =>
   top === undefined ||
   left === undefined ||
   right === undefined ||
   top === left + right;
 
+/**
+ * Check all equations on the wall
+ */
 const checkWall = (wall) =>
-  use(
-    wall.map((row) => row.map((col) => col.value)),
-    (values) =>
-      values.every(
-        (row, ridx) =>
-          ridx === values.length - 1 ||
-          row.every((value, cidx) =>
-            check(value, values[ridx + 1][cidx], values[ridx + 1][cidx + 1])
-          )
-      )
-  );
-
-const complete = (wall) =>
-  use(
-    wall.flatMap((e) => e).map((e) => e.value),
-    (values) => values.every((e) => e !== undefined)
-  );
+  traverse(wall, (top, left, right) =>
+    checkEquation(top.value, left.value, right.value)
+  ).every((e) => e);
 
 /**
  * Application state
@@ -136,7 +132,7 @@ let correctlySolved = +localStorage.getItem("correctlySolved") || 0;
 let showSchnickSchnack = true;
 let language = t.currentLanguage();
 let wallHeight = 3;
-let currentWall = randomWall(wallHeight);
+let currentWall = createRandomWall(wallHeight);
 
 const increaseCount = () => {
   correctlySolved = correctlySolved + 1;
@@ -154,16 +150,11 @@ const inputComponent = (vnode) => ({
 });
 
 const halfNeeded = (N, ridx) => (N + ridx) % 2 === 0;
-
-console.log("HalfNeeded", halfNeeded(4, 2));
-
 const fullNeeded = (N, ridx) => trunc((N - ridx - 1) / 2);
-
-console.log("fullNeeded", fullNeeded(4, 0));
 
 m.mount(document.body, {
   view: (vnode) =>
-    use(complete(currentWall) && checkWall(currentWall), (isSolved) => [
+    use(isComplete(currentWall) && checkWall(currentWall), (isSolved) => [
       h1(
         { onclick: (e) => (showSchnickSchnack = !showSchnickSchnack) },
         t("Zahlenmauer")
@@ -176,13 +167,13 @@ m.mount(document.body, {
         currentWall.map((r, ridx) =>
           tr(
             halfNeeded(currentWall.length, ridx)
-              ? td.half.wall({ colspan: 1 })
+              ? td.half.wall.empty({ colspan: 1 })
               : null,
             range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
-              td.full.wall({ colspan: 2 })
+              td.full.wall.empty({ colspan: 2 })
             ),
             r.map((field, cidx) =>
-              td.full.wall(
+              td.full.wall.number(
                 { colspan: 2 },
                 field.init === undefined
                   ? m(inputComponent, {
@@ -197,11 +188,11 @@ m.mount(document.body, {
               )
             ),
             range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
-              td.full.wall({ colspan: 2 })
+              td.full.wall.empty({ colspan: 2 })
             ),
 
             halfNeeded(currentWall.length, ridx)
-              ? td.half.wall({ colspan: 1 })
+              ? td.half.wall.empty({ colspan: 1 })
               : null
           )
         )
@@ -211,7 +202,8 @@ m.mount(document.body, {
             button(
               {
                 onclick: () =>
-                  increaseCount() && (currentWall = randomWall(wallHeight)),
+                  increaseCount() &&
+                  (currentWall = createRandomWall(wallHeight)),
               },
               t("Neu")
             ),
