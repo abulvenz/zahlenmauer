@@ -1,3 +1,7 @@
+body {
+    background-color: rgb(202, 223, 160);
+}
+
 .wall {
     border: 1px solid lightgray;
     padding: 0;
