@@ -43,7 +43,7 @@ table {
 .input {
     text-align: center;
     /*width: 2em;*/
-    width: 20px;
+    width: 100%;
     font-size: 1em;
     height: 1.5em;
     padding: 0px;
