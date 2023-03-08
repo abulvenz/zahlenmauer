@@ -157,17 +157,23 @@ const checkWall = (wall) =>
 /**
  * Application state
  */
-let correctlySolved = +localStorage.getItem("correctlySolved") || 0;
-let showSchnickSchnack = true;
-let language = t.currentLanguage();
-let wallHeight = 3;
-let onlyAddition = false;
+
 const maxHeight = 10;
-let currentWall = createRandomWall(wallHeight, onlyAddition);
+
+const state = {
+  correctlySolved: +localStorage.getItem("correctlySolved") || 0,
+  showSchnickSchnack: true,
+  language: t.currentLanguage(),
+  wallHeight: 3,
+  onlyAddition: false,
+  currentWall: null,
+};
+
+state.currentWall = createRandomWall(state.wallHeight, state.onlyAddition);
 
 const increaseCount = () => {
-  correctlySolved = correctlySolved + 1;
-  localStorage.setItem("correctlySolved", correctlySolved);
+  state.correctlySolved = state.correctlySolved + 1;
+  localStorage.setItem("correctlySolved", state.correctlySolved);
   return true;
 };
 
@@ -175,6 +181,7 @@ const inputComponent = (vnode) => ({
   view: (vnode) =>
     input.input({
       type: "number",
+      value: vnode.attrs.field.value,
       disabled: vnode.attrs.disabled,
       onchange: (e) => vnode.attrs.onchange(+e.target.value),
     }),
@@ -185,106 +192,138 @@ const fullNeeded = (N, ridx) => trunc((N - ridx - 1) / 2);
 
 m.mount(document.body, {
   view: (vnode) =>
-    use(isComplete(currentWall) && checkWall(currentWall), (isSolved) => [
-      h1(
-        { onclick: (e) => (showSchnickSchnack = !showSchnickSchnack) },
-        t("Zahlenmauer")
-      ),
-      table[isSolved ? "solved" : ""][
-        checkWall(currentWall) ? "correct" : "wrong"
-      ](
-        { cellspacing: 0 },
-
-        currentWall.map((r, ridx) =>
-          tr(
-            halfNeeded(currentWall.length, ridx)
-              ? td.half.wall.empty({ colspan: 1 })
-              : null,
-            range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
-              td.full.wall.empty({ colspan: 2 })
-            ),
-            r.map((field, cidx) =>
-              td.full.wall.number(
-                { colspan: 2 },
-                field.init === undefined
-                  ? m(inputComponent, {
-                      key: correctlySolved + "" + ridx + "" + cidx,
-                      disabled: isSolved,
-                      value: field.value,
-                      onchange: (e) => (field.value = e),
-                    })
-                  : field.value !== undefined
-                  ? field.value
-                  : "-"
-              )
-            ),
-            range(fullNeeded(currentWall.length, ridx)).map((c, cidx) =>
-              td.full.wall.empty({ colspan: 2 })
-            ),
-
-            halfNeeded(currentWall.length, ridx)
-              ? td.half.wall.empty({ colspan: 1 })
-              : null
-          )
+    use(
+      isComplete(state.currentWall) && checkWall(state.currentWall),
+      (isSolved) => [
+        h1(
+          {
+            onclick: (e) =>
+              (state.showSchnickSchnack = !state.showSchnickSchnack),
+          },
+          t("Zahlenmauer")
         ),
-        tr(range(currentWall.length * 2).map((e) => td({ colspan: 1 })))
-      ),
-      isSolved
-        ? [
-            button(
-              {
-                onclick: () =>
-                  increaseCount() &&
-                  (currentWall = createRandomWall(wallHeight, onlyAddition)),
-              },
-              t("Neu")
-            ),
-            " ",
-          ]
-        : null,
-      showSchnickSchnack
-        ? [
-            t("Größe") + ": ",
-            button(
-              { onclick: (e) => (wallHeight = max(3, wallHeight - 1)) },
-              "<"
-            ),
-            " " + wallHeight + " ",
-            button(
-              { onclick: (e) => (wallHeight = min(maxHeight, wallHeight + 1)) },
-              ">"
-            ),
-            br(),
-            correctlySolved
-              ? " " + t("Richtige") + ": " + correctlySolved
-              : null,
-            br(),
-            label(
-              input({
-                type: "checkbox",
-                checked: onlyAddition,
-                oninput: (e) => (onlyAddition = e.target.checked),
-              }),
-              tr("Nur Addition")
-            ),
-            p(t("Instructions")),
-            select(
-              {
-                value: language,
-                oninput: (e) => {
-                  language = e.target.value;
-                  t.setLanguage(e.target.value);
+        state.showSchnickSchnack
+          ? [
+              t("Größe") + ": ",
+              button(
+                {
+                  onclick: (e) => {
+                    state.wallHeight = max(3, state.wallHeight - 1);
+                    state.currentWall = createRandomWall(
+                      state.wallHeight,
+                      state.onlyAddition
+                    );
+                  },
                 },
-              },
-              t.getLanguages().map((c) => option(c))
-            ),
-            hr(),
-            div(
-              t("Impressum1"),
-              a({ href: "https://github.com/abulvenz/zahlenmauer" }, "github"),
-              t("Impressum2")
-            ),
-          ]
-        : null,
-    ]),
+                "<"
+              ),
+              " " + state.wallHeight + " ",
+              button(
+                {
+                  onclick: (e) => {
+                    state.wallHeight = min(maxHeight, state.wallHeight + 1);
+                    state.currentWall = createRandomWall(
+                      state.wallHeight,
+                      state.onlyAddition
+                    );
+                  },
+                },
+                ">"
+              ),
+            ]
+          : null,
+        br(),
+
+        table[isSolved ? "solved" : ""][
+          checkWall(state.currentWall) ? "correct" : "wrong"
+        ](
+          { cellspacing: 0 },
+          state.currentWall.map((r, ridx) =>
+            tr(
+              halfNeeded(state.currentWall.length, ridx)
+                ? td.half.wall.empty({ colspan: 1 })
+                : null,
+              range(fullNeeded(state.currentWall.length, ridx)).map((c, cidx) =>
+                td.full.wall.empty({ colspan: 2 })
+              ),
+              r.map((field, cidx) =>
+                td.full.wall.number(
+                  { colspan: 2 },
+                  field.init === undefined
+                    ? m(inputComponent, {
+                        key: state.correctlySolved + "" + ridx + "" + cidx,
+                        disabled: isSolved,
+                        field,
+                        onchange: (e) => (field.value = e),
+                      })
+                    : field.value !== undefined
+                    ? field.value
+                    : "-"
+                )
+              ),
+              range(fullNeeded(state.currentWall.length, ridx)).map((c, cidx) =>
+                td.full.wall.empty({ colspan: 2 })
+              ),
+
+              halfNeeded(state.currentWall.length, ridx)
+                ? td.half.wall.empty({ colspan: 1 })
+                : null
+            )
+          ),
+          tr(range(state.currentWall.length * 2).map((e) => td({ colspan: 1 })))
+        ),
+        isSolved
+          ? [
+              button(
+                {
+                  onclick: () =>
+                    increaseCount() &&
+                    (state.currentWall = createRandomWall(
+                      state.wallHeight,
+                      state.onlyAddition
+                    )),
+                },
+                t("Neu")
+              ),
+              " ",
+            ]
+          : null,
+        state.showSchnickSchnack
+          ? [
+              state.correctlySolved
+                ? " " + t("Richtige") + ": " + state.correctlySolved
+                : null,
+              br(),
+              label(
+                input({
+                  type: "checkbox",
+                  checked: state.onlyAddition,
+                  oninput: (e) => (state.onlyAddition = e.target.checked),
+                }),
+                tr("Nur Addition")
+              ),
+              p(t("Instructions")),
+              select(
+                {
+                  value: state.language,
+                  oninput: (e) => {
+                    state.language = e.target.value;
+                    t.setLanguage(e.target.value);
+                  },
+                },
+                t.getLanguages().map((c) => option(c))
+              ),
+              hr(),
+              div(
+                t("Impressum1"),
+                a(
+                  { href: "https://github.com/abulvenz/zahlenmauer" },
+                  "github"
+                ),
+                t("Impressum2")
+              ),
+            ]
+          : null,
+      ]
+    ),
 });
