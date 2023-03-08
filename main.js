@@ -17,10 +17,8 @@ const range = (N) => {
 const randomInt = (N) => trunc(random() * N);
 const dreieckszahl = (theta) => trunc((sqrt(8 * theta + 1) - 1) / 2);
 const use = (v, fn) => fn(v);
-const sumsum = (N) =>
-  range(N)
-    .map((e) => e + 1)
-    .reduce((acc, v) => acc + v, 0);
+
+const gauss = (N) => (N * (N + 1)) / 2;
 const countUndefined = (arr) => arr.filter((e) => e === undefined).length;
 const solvable = (arr) => arr.length === 3 && countUndefined(arr) === 1;
 
@@ -119,7 +117,7 @@ const solveWall = (theWall) => {
 
 const createRandomWall = (depth, onlyAddition = false, baseMaxValue = 4) => {
   const solvableStart = [
-    ...range(sumsum(depth - 1)).map((e) => undefined),
+    ...range(gauss(depth - 1)).map((e) => undefined),
     ...range(depth).map((e) => randomInt(baseMaxValue)),
   ];
 
